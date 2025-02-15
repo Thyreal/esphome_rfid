@@ -3,17 +3,20 @@
 
 #include "esphome.h"
 
-class RFIDSensor : public PollingComponent, public Sensor {
+namespace esphome {
+namespace rfid {
+
+class RFIDSensor : public Component, public UARTDevice {
  public:
   Sensor *uid_sensor = new Sensor();
 
-  RFIDSensor() : PollingComponent(1000) {}
+  RFIDSensor(UARTComponent *parent) : UARTDevice(parent) {}
 
   void setup() override {
     // Initialisierungscode
   }
 
-  void update() override {
+  void loop() override {
     // Code zum Lesen der RFID-Daten vom UART
     while (available()) {
       std::string data = read_line();
@@ -23,11 +26,12 @@ class RFIDSensor : public PollingComponent, public Sensor {
     }
   }
 
-  float get_setup_priority() const override { return esphome::setup_priority::HARDWARE; }
-
   void dump_config() override {
     ESP_LOGCONFIG(TAG, "RFID Sensor");
   }
 };
+
+}  // namespace rfid
+}  // namespace esphome
 
 #endif // RFID_SENSOR_H
