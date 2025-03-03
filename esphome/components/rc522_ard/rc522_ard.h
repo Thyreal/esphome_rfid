@@ -1,37 +1,20 @@
-#ifndef RFID_SENSOR_H
-#define RFID_SENSOR_H
+#ifndef RC522_ARD_H
+#define RC522_ARD_H
 
-#include "esphome.h"
+#include <Arduino.h>
+#include <SPI.h>
+#include "components/rc522/rc522.h"  // Relativer Pfad zu rc522.h
 
-namespace esphome {
-namespace rfid {
+class RC522Ard {
+public:
+    RC522Ard(uint8_t ssPin, uint8_t rstPin);
+    void begin();
+    void loop();
+    String readRFIDUID();
 
-class RFIDSensor : public Component, public UARTDevice {
- public:
-  Sensor *uid_sensor = new Sensor();
-
-  RFIDSensor(UARTComponent *parent) : UARTDevice(parent) {}
-
-  void setup() override {
-    // Initialisierungscode
-  }
-
-  void loop() override {
-    // Code zum Lesen der RFID-Daten vom UART
-    while (available()) {
-      std::string data = read_line();
-      if (!data.empty()) {
-        uid_sensor->publish_state(data.c_str());
-      }
-    }
-  }
-
-  void dump_config() override {
-    ESP_LOGCONFIG(TAG, "RFID Sensor");
-  }
+private:
+    MFRC522 mfrc522;
+    HardwareSerial *serial;
 };
 
-}  // namespace rfid
-}  // namespace esphome
-
-#endif // RFID_SENSOR_H
+#endif // RC522_ARD_H
